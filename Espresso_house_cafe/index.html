@@ -169,6 +169,25 @@ body::after{
   pointer-events:none;
 }
 
+/* Search + light mode, pinned to the top-right.
+   The wrapper mirrors the bar's own max-width and padding, so the buttons land
+   exactly on the bar's right edge once it sticks — they look like part of it. */
+.topctl{
+  position:fixed;top:9px;left:50%;transform:translateX(-50%);z-index:60;
+  width:min(1020px,100%);padding:0 14px;
+  display:flex;justify-content:flex-end;gap:8px;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+.topctl .iconbtn{
+  pointer-events:auto;
+  background:color-mix(in srgb,var(--bg) 72%,transparent);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  color:var(--ink);
+}
+.topctl .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+body.searching .topctl{opacity:0;pointer-events:none}
+
 /* ---------- sticky bar ---------- */
 .bar{
   position:sticky;top:0;z-index:50;
@@ -179,39 +198,24 @@ body::after{
 .bar-in{
   position:relative;display:flex;align-items:center;gap:8px;
   max-width:1020px;margin:0 auto;padding:10px 14px;
+  transition:padding-right .3s ease;
 }
+/* once the bar sticks to the top, the two buttons overlay its right end — keep the pills clear */
+body.scrolled .bar-in{padding-right:100px}
 .bar-in>*{transition:opacity .2s ease}
 .bar.searching .bar-in>*:not(.searchwrap){opacity:0;pointer-events:none}
 
-/* top-corner controls — they sit above the logo and scroll away with the page,
-   so they never end up on top of the category pills */
-.topfab{
-  position:absolute;top:12px;right:14px;z-index:60;
-  display:flex;gap:8px;
-  transition:opacity .25s ease,transform .25s ease;
-}
-.topfab .iconbtn{
-  background:color-mix(in srgb,var(--bg) 72%,transparent);
-  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  color:var(--ink);
-}
-.topfab .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
-/* while the search field is open, get out of its way */
-body.searching .topfab{opacity:0;pointer-events:none;transform:translateY(-6px)}
 
+/* "Espresso House" sits on the left of the bar while the page is at the top,
+   then slides away as soon as you scroll, giving the categories the full width. */
 .bar-brand{
   display:flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;
   font:600 13px "Fraunces",Georgia,serif;letter-spacing:.06em;white-space:nowrap;
-  max-width:0;opacity:0;overflow:hidden;
-  transition:max-width .35s ease,opacity .3s ease,margin .35s ease;
+  max-width:190px;opacity:1;overflow:hidden;margin-right:4px;
+  transition:max-width .35s ease,opacity .25s ease,margin .35s ease;
 }
-body.scrolled .bar-brand{max-width:190px;opacity:1;margin-right:4px}
+body.scrolled .bar-brand{max-width:0;opacity:0;margin-right:0}
 .beanmini{width:17px;height:17px;flex:none;color:var(--ink)}
-/* on phones keep the name, just a touch tighter so the pills still have room */
-@media (max-width:620px){
-  body.scrolled .bar-brand{max-width:150px}
-  .bar-brand{font-size:12px;gap:6px}
-}
 
 .pills{
   position:relative;
@@ -353,7 +357,6 @@ input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none}
   display:grid;place-items:center;
   opacity:0;pointer-events:none;transform:translateY(8px);transition:.3s;
 }
-#searchFab{bottom:70px}                       /* sits just above back-to-top */
 body.scrolled .btt{opacity:1;pointer-events:auto;transform:none}
 body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while searching */
 .btt:hover{border-color:var(--accent);color:var(--accent)}
@@ -375,8 +378,9 @@ body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while
 <a class="skip" href="#menu">Skip to menu</a>
 <div class="progress" id="progress" aria-hidden="true"></div>
 
-<!-- Fixed top-corner controls — sit above the logo, stay reachable while scrolling -->
-<div class="topfab" id="topfab">
+<!-- Search + light mode. Fixed to the top-right corner: they sit over the logo at the top of
+     the page, and once the category bar sticks to the top they line up neatly inside it. -->
+<div class="topctl" id="topctl">
   <button class="iconbtn" id="searchBtn" aria-label="Search the menu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
       <circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/>
@@ -425,6 +429,7 @@ body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while
 <!-- ================= STICKY BAR ================= -->
 <div class="bar" id="bar">
   <div class="bar-in">
+
     <a class="bar-brand" href="#top">
       <svg class="beanmini" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 2.6c4.4 0 6.4 4.2 6.4 9.4S16.4 21.4 12 21.4 5.6 17.2 5.6 12 7.6 2.6 12 2.6Z" fill="currentColor"/>
@@ -434,6 +439,7 @@ body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while
     </a>
 
     <nav class="pills" id="pills" aria-label="Menu sections"></nav>
+
 
     <div class="searchwrap" id="searchwrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
@@ -476,12 +482,6 @@ body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while
 
   <p class="tiny">© 2026 Espresso House</p>
 </footer>
-
-<button class="btt" id="searchFab" aria-label="Search the menu">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-    <circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/>
-  </svg>
-</button>
 
 <button class="btt" id="btt" aria-label="Back to top">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -755,7 +755,6 @@ function closeSearch() {
   input.blur();
 }
 $("#searchBtn").addEventListener("click", openSearch);
-$("#searchFab").addEventListener("click", openSearch);
 $("#searchClose").addEventListener("click", closeSearch);
 input.addEventListener("input", () => applyFilter(input.value));
 input.addEventListener("keydown", e => { if (e.key === "Escape") closeSearch(); });
