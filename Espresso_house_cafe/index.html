@@ -188,6 +188,16 @@ body::after{
 .topctl .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
 body.searching .topctl{opacity:0;pointer-events:none}
 
+/* the light/dark button belongs to the top of the page — it folds away as you scroll,
+   so only search rides down with the category bar */
+#themeBtn{
+  overflow:hidden;
+  transition:width .3s ease,opacity .25s ease,margin .3s ease,border-color .25s,color .25s;
+}
+body.scrolled #themeBtn{
+  width:0;min-width:0;padding:0;margin-left:-8px;opacity:0;border-width:0;pointer-events:none;
+}
+
 /* ---------- sticky bar ---------- */
 .bar{
   position:sticky;top:0;z-index:50;
@@ -200,8 +210,8 @@ body.searching .topctl{opacity:0;pointer-events:none}
   max-width:1020px;margin:0 auto;padding:10px 14px;
   transition:padding-right .3s ease;
 }
-/* once the bar sticks to the top, the two buttons overlay its right end — keep the pills clear */
-body.scrolled .bar-in{padding-right:100px}
+/* once the bar sticks to the top, only the search button overlays its right end */
+body.scrolled .bar-in{padding-right:62px}
 .bar-in>*{transition:opacity .2s ease}
 .bar.searching .bar-in>*:not(.searchwrap){opacity:0;pointer-events:none}
 
