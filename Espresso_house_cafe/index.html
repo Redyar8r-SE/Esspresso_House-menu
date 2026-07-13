@@ -207,8 +207,11 @@ body.searching .topfab{opacity:0;pointer-events:none;transform:translateY(-6px)}
 }
 body.scrolled .bar-brand{max-width:190px;opacity:1;margin-right:4px}
 .beanmini{width:17px;height:17px;flex:none;color:var(--ink)}
-/* on phones the buttons take the left, so drop the brand to give the pills room */
-@media (max-width:620px){.bar-brand{display:none}}
+/* on phones keep the name, just a touch tighter so the pills still have room */
+@media (max-width:620px){
+  body.scrolled .bar-brand{max-width:150px}
+  .bar-brand{font-size:12px;gap:6px}
+}
 
 .pills{
   position:relative;
@@ -341,6 +344,7 @@ input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none}
   font:400 11px "Space Grotesk";letter-spacing:.12em;text-transform:uppercase}
 
 /* back to top */
+/* floating buttons, bottom-right — they follow you down the page */
 .btt{
   position:fixed;right:16px;bottom:16px;z-index:40;width:46px;height:46px;border-radius:50%;
   border:1px solid var(--line);color:var(--ink);cursor:pointer;
@@ -349,7 +353,9 @@ input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none}
   display:grid;place-items:center;
   opacity:0;pointer-events:none;transform:translateY(8px);transition:.3s;
 }
+#searchFab{bottom:70px}                       /* sits just above back-to-top */
 body.scrolled .btt{opacity:1;pointer-events:auto;transform:none}
+body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while searching */
 .btt:hover{border-color:var(--accent);color:var(--accent)}
 .btt svg{width:18px;height:18px}
 
@@ -470,6 +476,12 @@ body.scrolled .btt{opacity:1;pointer-events:auto;transform:none}
 
   <p class="tiny">© 2026 Espresso House</p>
 </footer>
+
+<button class="btt" id="searchFab" aria-label="Search the menu">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+    <circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/>
+  </svg>
+</button>
 
 <button class="btt" id="btt" aria-label="Back to top">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -743,6 +755,7 @@ function closeSearch() {
   input.blur();
 }
 $("#searchBtn").addEventListener("click", openSearch);
+$("#searchFab").addEventListener("click", openSearch);
 $("#searchClose").addEventListener("click", closeSearch);
 input.addEventListener("input", () => applyFilter(input.value));
 input.addEventListener("keydown", e => { if (e.key === "Escape") closeSearch(); });
