@@ -206,16 +206,18 @@ body.scrolled .bar-in{padding-right:100px}
 .bar.searching .bar-in>*:not(.searchwrap){opacity:0;pointer-events:none}
 
 
-/* "Espresso House" sits on the left of the bar while the page is at the top,
-   then slides away as soon as you scroll, giving the categories the full width. */
+/* A small bean mark sits on the left of the bar and stays there while you scroll.
+   Icon only — the full name ate ~120px of the pills' room.
+   TO SHOW THE NAME TOO: delete the ".bar-brand span{display:none}" line below. */
 .bar-brand{
-  display:flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;
+  display:flex;align-items:center;flex:none;gap:8px;color:var(--ink);text-decoration:none;
   font:600 13px "Fraunces",Georgia,serif;letter-spacing:.06em;white-space:nowrap;
-  max-width:190px;opacity:1;overflow:hidden;margin-right:4px;
-  transition:max-width .35s ease,opacity .25s ease,margin .35s ease;
+  margin-right:4px;
+  transition:color .25s ease;
 }
-body.scrolled .bar-brand{max-width:0;opacity:0;margin-right:0}
-.beanmini{width:17px;height:17px;flex:none;color:var(--ink)}
+.bar-brand:hover{color:var(--accent)}
+.bar-brand span{display:none}
+.beanmini{width:22px;height:22px;flex:none;color:currentColor}
 
 .pills{
   position:relative;
