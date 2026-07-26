@@ -320,6 +320,8 @@ input[type="search"]::-webkit-search-cancel-button{-webkit-appearance:none}
   font:600 14.5px "Space Grotesk";font-variant-numeric:tabular-nums;letter-spacing:.04em;
 }
 .item:hover .item-price{color:var(--accent)}
+/* items with no price: no trailing dots, name sits on its own */
+.no-price .dots{border-bottom:none}
 .item-desc{margin:3px 0 0;max-width:46ch;color:var(--muted);font:400 13px/1.45 "Space Grotesk"}
 .badge{
   display:inline-block;vertical-align:2px;margin-left:8px;padding:4px 8px 3px;
@@ -510,7 +512,9 @@ body.searching .btt{opacity:0;pointer-events:none}   /* get out of the way while
 const MENU = [
   { id:"hot", label:"Hot Drinks", items:[
     { n:"Espresso", p:2500 },
-    { n:"Espresso Lotus", p:3500 },
+    { n:"Ristretto", p:2500 },
+    { n:"Lungo", p:2500 },
+    { n:"Espresso Lotus", p:3000 },
     { n:"Double Espresso", p:3500 },
     { n:"Espresso Macchiato", p:3500 },
     { n:"Americano", p:3000 },
@@ -524,8 +528,8 @@ const MENU = [
     { n:"Flat White", p:4000 },
     { n:"Cortado", p:3000 },
     { n:"Hot Chocolate", p:3000 },
-    { n:"Arabic Coffee", p:2000 },
-    { n:"Turkish Coffee", p:2000 },
+    { n:"Arabic Coffee", p:2500 },
+    { n:"Turkish Coffee", p:2500 },
     { n:"Qazwan", p:2500 },
     { n:"Fstq", p:2500 },
     { n:"Milk", p:2000 },
@@ -534,7 +538,7 @@ const MENU = [
     { n:"V60 Coffee", p:5000 },
   ]},
   { id:"cold", label:"Cold Drinks", items:[
-    { n:"Ice Espresso", p:3000 },
+    { n:"Ice Espresso", p:2500 },
     { n:"Ice Espresso Orange", p:4000 },
     { n:"Ice Americano", p:3500 },
     { n:"Ice Latte", p:4000 },
@@ -544,6 +548,9 @@ const MENU = [
     { n:"Ice Nescafe Milk", p:4000 },
     { n:"Frappe", p:4500 },
     { n:"Espresso Tonic", p:3500 },
+    { n:"Red Bull" },
+    { n:"Red Bull Arabic" },
+    { n:"Maxiki" },
   ]},
   { id:"mocktails", label:"Mocktails", items:[
     { n:"Blue Lagoon", p:4500 },
@@ -652,11 +659,11 @@ MENU.forEach(sec => {
     </div>
     <ul class="items">
       ${sec.items.map((it, i) => `
-        <li class="item reveal" style="--d:${(i % 8) * 35}ms" data-name="${(it.n + " " + (it.d || "")).toLowerCase()}">
+        <li class="item reveal${it.p == null ? " no-price" : ""}" style="--d:${(i % 8) * 35}ms" data-name="${(it.n + " " + (it.d || "")).toLowerCase()}">
           <div class="item-line">
             <span class="item-name">${it.n}${(it.b || it.s) ? `<span class="badge${it.b ? " badge-new" : ""}">${it.b || "Signature"}</span>` : ""}</span>
             <span class="dots" aria-hidden="true"></span>
-            <span class="item-price">${fmt(it.p)}</span>
+            <span class="item-price">${it.p == null ? "" : fmt(it.p)}</span>
           </div>
           ${it.d ? `<p class="item-desc">${it.d}</p>` : ""}
         </li>`).join("")}
